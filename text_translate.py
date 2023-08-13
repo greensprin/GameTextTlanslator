@@ -22,6 +22,9 @@ class GUI:
         self._run_translate_thread.setDaemon(True)
         self._run_translate_thread.start()
 
+        # テンプレート文字列
+        self.header_template = "Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish"
+
         # GUI設定
         self.root = tk.Tk()
 
@@ -289,7 +292,12 @@ class GUI:
                 line_split = line.split(",")
 
                 if (i == 0):
-                    text_header = line_split
+                    if (line == self.header_template):
+                        text_header = line_split
+                    else:
+                        print("[INFO] Header is not exist.")
+                        text_header = self.header_template.split(",")
+                        text_elems.append(line_split)
                 else:
                     # "," で分割してリストに登録
                     text_elems.append(line_split)
