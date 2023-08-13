@@ -1,0 +1,7 @@
+vehicle鮫Placeable
+gunBotT2JunkTurret2
+meleeToolPickT4Auger
+gunA_Bow1
+gunA_Bow1Desc
+a-Delivery request form shotgun shell01
+a-Delivery request form shotgun shell01Desc
