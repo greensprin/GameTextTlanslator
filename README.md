@@ -13,7 +13,7 @@
         ```
     - mac/linux
         ```bash
-        .env/bin/activate
+        source .env/bin/activate
         ```
 4. ライブラリインストール
     ```bash
