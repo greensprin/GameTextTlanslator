@@ -1,0 +1,20 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
+<!--1キー、2ファイル、3タイプ、4メインメニュー、5翻訳しない、6以降翻訳-->
+<!--6英語、7代替テキスト、8ドイツ語、9ラテン語、10フランス語、11イタリア語、12日本語、13韓国語、14ポーランド語、15ブラジル語(ポルトガル語）、16ロシア語、17トルコ語、18中国語（簡体）、19中国語（繁体）、20スペイン語 -->
+<!-- 1xuiBuffStatDays,2UI,3XUI,4,5?,6Days,7,8Tage,9Días,10Jours,11Giorni,12日,13일,14Dni,15Dias,16Дней,17Gün,18天数,19天,20Días -->
+<!-- 4,5 7は無し-->    
+
+vehicle鮫Placeable,vehicles,vehicle,4,5,6,7,8,9,10,11,乗用鮫12,13,14,15,16,17,18,19,20
+
+
+gunBotT2JunkTurret2,Item,,,gunBotT2Junk2Turret,,,,,,,超改造タレット,,,,,,
+meleeToolPickT4Auger,Item,,,meleeToolPickT4Auger,,,,,,,改良オーガー,,,,,,
+
+
+
+gunA_Bow1,entityclasses,Entity,,,粗末に見える弓,,,,,,,,,,,,,
+gunA_Bow1Desc,entityclasses,gunA-Bow1,,,外見は粗末な弓ですが威力が上昇しています,,,,,,,,,,,,,
+
+
+a-Delivery request form shotgun shell01,items,Item,,,a-Delivery request form shotgun shell,,,17,16,15,配達依頼書,20,30,40,,,,
+a-Delivery request form shotgun shell01Desc,items,Item,,,a-Delivery request form shotgun shell,,,,32,31,商人ヴァンからの配達依頼書です。このアイテムを使用すると配達クエストが発生します,35,36,,,,,,
