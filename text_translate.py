@@ -16,7 +16,7 @@ GUI_END_FLG = 0
 
 class GUI:
     def __init__(self):
-        # スクレイピングは別プロセスで実行させる
+        # 別プロセス実行
         self.start_flg = 0
         self._run_translate_thread = threading.Thread(target=self.__run_process)
         self._run_translate_thread.setDaemon(True)
