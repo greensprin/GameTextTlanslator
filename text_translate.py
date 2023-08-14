@@ -24,6 +24,9 @@ class GUI:
 
         # テンプレート文字列
         self.header_template = "Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish"
+        # 改行位置の指定
+        self.header_template_with_newline = self.header_template.replace("/ Alternate Text,", "/ Alternate Text,\n")
+
 
         # GUI設定
         self.root = tk.Tk()
@@ -36,13 +39,24 @@ class GUI:
         # タイトル表示
         self.root.title("Text Translator")
 
+        # テンプレート表示
+        self.label_header_template = tk.Label(text=self.header_template_with_newline, wraplength=800, justify="left", anchor="w")
+
         label_file_path = tk.Label(text="Text File Path")
         self.textbox_file_path = tk.Entry(width = 40)
 
+        #機能選択プルダウンメニュー
+        label_option = tk.Label(text="Select Option")
+        combbox_option_values = ("機能1","機能2")
+        self.combbox_option = ttk.Combobox(self.root, width = 12, height=7, values=combbox_option_values)
+        self.combbox_option.set(combbox_option_values[0])
+        self.combbox_option.bind("<<ComboboxSelected>>", self.__update_combbox_language)
+
+        #言語選択プルダウンメニュー
         label_language = tk.Label(text="Select Language")
-        combbox_language_values = ("Key", "english","german","latam","french","italian","japanese","koreana","polish","brazilian","russian","turkish","schinese","tchinese","spanish")
-        self.combbox_language = ttk.Combobox(width = 12, height=7, values=combbox_language_values)
-        self.combbox_language.set(combbox_language_values[0]) # Keyを初期値として設定
+        self.combbox_language_values = ("Key", "english","german","latam","french","italian","japanese","koreana","polish","brazilian","russian","turkish","schinese","tchinese","spanish")
+        self.combbox_language = ttk.Combobox(self.root, width = 12, height=7, values=self.combbox_language_values)
+        self.combbox_language.set(self.combbox_language_values[0])
 
         self.filedialog_btn = tk.Button(self.root, text="参照", command=self.__open_filedialog, font=("", 8))
 
@@ -61,16 +75,19 @@ class GUI:
         self.label_progress      = tk.Label(text="")
         self.label_progress_line = tk.Label(text="")
 
-        label_file_path       .grid(row=0, column=0, padx=10, pady=10)
-        self.textbox_file_path.grid(row=0, column=1, padx=10, pady=10, sticky=tk.W)
-        self.filedialog_btn   .grid(row=0, column=2, padx=0 , pady=0 , sticky=tk.W)
-        label_language        .grid(row=1, column=0, padx=10, pady=10)
-        self.combbox_language .grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
-        self.button           .grid(row=2, column=0, padx=10, pady=10)
-        self.label_output     .grid(row=3, column=0, padx=10, pady=5)
-        self.label_outfilename.place(x= 120, y=134)
+        self.label_header_template.grid(row=0, column=0, padx=10, pady=10, columnspan=3, sticky=tk.W)
+        label_file_path            .grid(row=1, column=0, padx=10, pady=10)
+        self.textbox_file_path     .grid(row=1, column=1, padx=10, pady=10, sticky=tk.W)
+        self.filedialog_btn        .grid(row=1, column=2, padx=0 , pady=0 , sticky=tk.W)
+        label_option               .grid(row=2, column=0, padx=10, pady=10)
+        self.combbox_option        .grid(row=2, column=1, padx=10, pady=10, sticky=tk.W)
+        label_language             .grid(row=3, column=0, padx=10, pady=10)
+        self.combbox_language      .grid(row=3, column=1, padx=10, pady=10, sticky=tk.W)
+        self.button                .grid(row=4, column=0, padx=10, pady=10)
+        self.label_output          .grid(row=5, column=0, padx=10, pady=5)
+        self.label_outfilename     .place(x= 120, y=244)
 
-        label_orderer_y = 170
+        label_orderer_y = 280
         label_orderer         .place(x=20, y=label_orderer_y +  0)
         label_date            .place(x=20, y=label_orderer_y + 20)
         label_version         .place(x=20, y=label_orderer_y + 40)
@@ -93,7 +110,13 @@ class GUI:
         self.root.update_idletasks()
         window_width  = self.root.winfo_width()
         window_height = self.root.winfo_height()
-        # print(window_width, window_height)
+        print(window_width, window_height)
+
+        #テンプレート表示動的切り替え
+        if (window_width < 1000):
+            self.label_header_template.config(text="")
+        else:
+            self.label_header_template.config(text=self.header_template)
 
         # 動的に文字列を表示、非表示するコードのサンプル
         # if (window_width < 1000):
@@ -308,6 +331,16 @@ class GUI:
             text_dict_lists.append(dict(zip(text_header, elem)))
 
         return text_header, text_dict_lists
+
+    def __update_combbox_language(self, event):
+        selected_option = self.combbox_option.get()
+
+        #機能選択によって言語選択プルダウンメニュー表示切り替え
+        if selected_option == "機能1":
+            self.combbox_language["values"] = ("Key",)
+        elif selected_option == "機能2":
+            self.combbox_language["values"] = self.combbox_language_values
+
 
 def main():
     gui = GUI()
