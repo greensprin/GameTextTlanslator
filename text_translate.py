@@ -219,7 +219,7 @@ class GUI:
     def __run_text_translate(self, text_file_path, select_language):
         global GUI_END_FLG
 
-        self.label_converting   ["text"] = "【Translating】"
+        self.label_converting   ["text"] = "[ Translating ]"
         self.label_progress     ["text"] = "Progress: 0%"
 
         # テキストデータ読み込み
@@ -323,10 +323,10 @@ class GUI:
                 # 内容記述
                 # 空白かつコメントアウト行ではないが、指定された言語が空白である場合は、処理をスキップしたことを伝える
                 if (item["Key"] != "" and item["Key"].find("<!--") == -1 and item[select_language] == ""):
-                    f.write("<!-- ↓ の行は指定された言語が空白であるため翻訳処理をスキップしています -->\n")
+                    f.write("<!-- The line below is skipping translation because the selected language is blank -->\n")
                 f.writelines(",".join([str(value) for value in item.values()]) + "\n")
 
-        self.label_converting   ["text"] = "【End of Translation】"
+        self.label_converting   ["text"] = "[ End of Translation ]"
         self.label_progress_line["text"] = ""
 
     def __read_text(self, text_file_path):
@@ -354,15 +354,16 @@ class GUI:
         # データ扱いやすいように辞書型に変換し、変換したものをリストに登録する
         text_dict_lists = []
         for elem in text_elems:
-            if (self.combbox_function.get() == self.combbox_function_values[0]):
+            if (elem[0] == "" or elem[0].find("<!--") != -1):
+                text_dict_tmp = dict(zip(text_header, elem))
+            else:
                 text_dict_tmp = dict(zip_longest(text_header, elem))
 
-                # Noneの箇所を置換
-                for key, value in text_dict_tmp.items():
-                    if (value == None):
-                        text_dict_tmp[key] = ""
-            else:
-                text_dict_tmp = dict(zip(text_header, elem))
+                if (self.combbox_function.get() == self.combbox_function_values[0]):
+                    # Noneの箇所を置換
+                    for key, value in text_dict_tmp.items():
+                        if (value == None):
+                            text_dict_tmp[key] = ""
                 
             text_dict_lists.append(text_dict_tmp)
 
