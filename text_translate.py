@@ -74,12 +74,12 @@ class GUI:
 
         # 翻訳開始ボタン
         self.button = tk.Button(self.root, text="F. Start Translation", command=self.__start_process)
-        self.label_seconds_per_line = tk.Label(text="2 seconds per line")
+        self.label_seconds_per_line = tk.Label(text="30 seconds per line")
 
         # 各種情報
         self.outline       = tk.Label(text="", height=4, width=17, relief=tk.SOLID, bd=1)
         self.label_orderer = tk.Label(text="I. orderer: az-jp"    )
-        self.label_date    = tk.Label(text="   date: 2023/08/14"  )
+        self.label_date    = tk.Label(text="   date: 2023/08/23"  )
         self.label_version = tk.Label(text="   version: 7DTD・a21")
 
         # 実行時表示部
