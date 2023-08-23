@@ -32,7 +32,7 @@ class GUI:
         self.root = tk.Tk()
 
         win_width  = 570
-        win_height = 380
+        win_height = 450
         self.root.geometry(f"{win_width}x{win_height}")
         # self.root.state("zoomed") # ウィンドウを最大サイズで起動する
 
@@ -40,12 +40,21 @@ class GUI:
         self.root.title("Text Translator")
 
         # ヘッダーテンプレート表示
-        self.template_outline        = tk.Label(text="", height=5, width=79, relief=tk.SOLID, bd=1)
+        self.template_outline        = tk.Label(text="", height=8, width=79, relief=tk.SOLID, bd=1)
         self.label_template          = tk.Label(text="A. Template")
         self.header_template_split_0 = ",".join(self.header_template.split(",")[ 0: 7])
         self.header_template_split_1 = ",".join(self.header_template.split(",")[ 7:])
-        self.label_header_template_0 = tk.Label(text=self.header_template_split_0)
-        self.label_header_template_1 = tk.Label(text=self.header_template_split_1)
+
+        self.text_header_template_0 = tk.Text(width=90, height=2, font=("Arial", 8), bg="#f0f0f0", relief="flat")
+        self.text_header_template_0.insert(tk.END, ",\n".join([self.header_template_split_0, self.header_template_split_1]))
+        self.text_header_template_0["state"] = "disable"
+
+        self.text_header_only_key   = tk.Text(width=90, height=1, font=("Arial", 8), bg="#f0f0f0", relief="flat")
+        self.text_header_only_key.insert(tk.END, "Key")
+        self.text_header_only_key["state"] = "disable"
+
+        self.label_header_alphabet0 = tk.Label(text="<V>")
+        self.label_header_alphabet1 = tk.Label(text="<X>")
 
         # ファイル選択
         label_file_path = tk.Label(text="B. Text File Path")
@@ -87,19 +96,21 @@ class GUI:
         self.label_progress      = tk.Label(text="")
         self.label_progress_line = tk.Label(text="")
 
-        self.label_template         .grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
-        self.label_header_template_0.grid(row=1, column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
-        self.label_header_template_1.grid(row=2, column=0, padx=10, pady=(0,10), columnspan=5, sticky=tk.W)
-        label_file_path             .grid(row=3, column=0, padx=10, pady=10    , sticky=tk.W)
-        self.textbox_file_path      .grid(row=3, column=1, padx=10, pady=10    , sticky=tk.W)
-        self.filedialog_btn         .grid(row=3, column=2, padx= 0, pady= 0    , sticky=tk.W)
-        label_select_function       .grid(row=4, column=0, padx=10, pady=10    , sticky=tk.W)
-        self.combbox_function       .grid(row=4, column=1, padx=10, pady=10    , sticky=tk.W)
-        label_language              .grid(row=5, column=0, padx=10, pady=10    , sticky=tk.W)
-        self.combbox_language       .grid(row=5, column=1, padx=10, pady=10    , sticky=tk.W)
-        self.label_output           .grid(row=6, column=0, padx=10, pady= 5    , sticky=tk.W)
-        self.button                 .grid(row=7, column=0, padx=10, pady=(10,0),sticky=tk.W)
-        self.label_seconds_per_line .grid(row=8, column=0, padx=10, pady=0    , sticky=tk.W)
+        self.label_template         .grid(row=0 , column=0, padx=10, pady=(10, 0), sticky=tk.W)
+        self.label_header_alphabet0 .grid(row=1 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
+        self.text_header_only_key   .grid(row=2 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
+        self.label_header_alphabet1 .grid(row=3 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
+        self.text_header_template_0 .grid(row=4 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
+        label_file_path             .grid(row=5 , column=0, padx=10, pady=(15, 10), sticky=tk.W)
+        self.textbox_file_path      .grid(row=5 , column=1, padx=10, pady=(15, 10), sticky=tk.W)
+        self.filedialog_btn         .grid(row=5 , column=2, padx= 0, pady=(5, 0)    , sticky=tk.W)
+        label_select_function       .grid(row=6 , column=0, padx=10, pady=10    , sticky=tk.W)
+        self.combbox_function       .grid(row=6 , column=1, padx=10, pady=10    , sticky=tk.W)
+        label_language              .grid(row=7 , column=0, padx=10, pady=10    , sticky=tk.W)
+        self.combbox_language       .grid(row=7 , column=1, padx=10, pady=10    , sticky=tk.W)
+        self.label_output           .grid(row=8 , column=0, padx=10, pady= 5    , sticky=tk.W)
+        self.button                 .grid(row=9, column=0, padx=10, pady=(10,0),sticky=tk.W)
+        self.label_seconds_per_line .grid(row=10, column=0, padx=10, pady=0    , sticky=tk.W)
 
         # 画面リサイズされた時の挙動設定
         self.root.bind("<Configure>", self.__resize_frame)
@@ -150,15 +161,13 @@ class GUI:
         # # 動的に文字列を表示、非表示するコードのサンプル
         # if (window_width < 560):
         #     self.label_template         .grid_remove()
-        #     self.label_header_template_0.grid_remove()
-        #     self.label_header_template_1.grid_remove()
+        #     self.text_header_template_0.grid_remove()
         #     self.__set_place(137, 129, template_outline_flg=0)
         # else:
         #     self.label_template         .grid()
-        #     self.label_header_template_0.grid()
-        #     self.label_header_template_1.grid()
+        #     self.text_header_template_0.grid()
         #     self.__set_place(160, 210, template_outline_flg=1)
-        self.__set_place(160, 210, template_outline_flg=1)
+        self.__set_place(160, 255, template_outline_flg=1)
 
     # 終了の動作
     def __on_closing(self):
@@ -297,41 +306,26 @@ class GUI:
             print(f"[INFO] src_language            : {src_language[select_language]}")
 
             # 翻訳処理 (指定の言語と翻訳後の言語が同じ場合は翻訳しない)
-            SLEEP_TIME = 2 # sec. 高速でアクセスしすぎると翻訳エラーになるため
-            item["english"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="en")   .text if (select_language != "english"  ) else item["english"  ]
-            time.sleep(SLEEP_TIME)
-            item["german"   ] = translator.translate(select_language_text, src=src_language[select_language], dest="de")   .text if (select_language != "german"   ) else item["german"   ]
-            time.sleep(SLEEP_TIME)
-            item["latam"    ] = translator.translate(select_language_text, src=src_language[select_language], dest="la")   .text if (select_language != "latam"    ) else item["latam"    ]
-            time.sleep(SLEEP_TIME)
-            item["french"   ] = translator.translate(select_language_text, src=src_language[select_language], dest="fr")   .text if (select_language != "french"   ) else item["french"   ]
-            time.sleep(SLEEP_TIME)
-            item["italian"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="it")   .text if (select_language != "italian"  ) else item["italian"  ]
-            time.sleep(SLEEP_TIME)
-            item["japanese" ] = translator.translate(select_language_text, src=src_language[select_language], dest="ja")   .text if (select_language != "japanese" ) else item["japanese" ]
-            time.sleep(SLEEP_TIME)
-            item["koreana"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="ko")   .text if (select_language != "koreana"  ) else item["koreana"  ]
-            time.sleep(SLEEP_TIME)
-            item["polish"   ] = translator.translate(select_language_text, src=src_language[select_language], dest="pl")   .text if (select_language != "polish"   ) else item["polish"   ]
-            time.sleep(SLEEP_TIME)
-            item["brazilian"] = translator.translate(select_language_text, src=src_language[select_language], dest="pt")   .text if (select_language != "brazilian") else item["brazilian"]
-            time.sleep(SLEEP_TIME)
-            item["russian"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="ru")   .text if (select_language != "russian"  ) else item["russian"  ]
-            time.sleep(SLEEP_TIME)
-            item["turkish"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="tr")   .text if (select_language != "turkish"  ) else item["turkish"  ]
-            time.sleep(SLEEP_TIME)
-            item["schinese" ] = translator.translate(select_language_text, src=src_language[select_language], dest="zh-cn").text if (select_language != "schinese" ) else item["schinese" ]
-            time.sleep(SLEEP_TIME)
-            item["tchinese" ] = translator.translate(select_language_text, src=src_language[select_language], dest="zh-tw").text if (select_language != "tchinese" ) else item["tchinese" ]
-            time.sleep(SLEEP_TIME)
-            item["spanish"  ] = translator.translate(select_language_text, src=src_language[select_language], dest="es")   .text if (select_language != "spanish"  ) else item["spanish"  ]
-            time.sleep(SLEEP_TIME)
+            item["english"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "en"   , "english"  )
+            item["german"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "de"   , "german"   )
+            item["latam"    ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "la"   , "latam"    )
+            item["french"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "fr"   , "french"   )
+            item["italian"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "it"   , "italian"  )
+            item["japanese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ja"   , "japanese" )
+            item["koreana"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ko"   , "koreana"  )
+            item["polish"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "pl"   , "polish"   )
+            item["brazilian"] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "pt"   , "brazilian")
+            item["russian"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ru"   , "russian"  )
+            item["turkish"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "tr"   , "turkish"  )
+            item["schinese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "zh-cn", "schinese" )
+            item["tchinese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "zh-tw", "tchinese" )
+            item["spanish"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "es"   , "spanish"  )
 
             print(item) # for debug
 
             # GUIが終了したときは強制終了
             if (GUI_END_FLG == 1):
-                return
+                break
 
             # 処理が終わったら進捗を進める
             self.label_progress["text"] = f"Progress: {round((i+1)/len(text_dict_lists)*100)}%"
@@ -352,9 +346,38 @@ class GUI:
                 if (item["Key"] != "" and item["Key"].find("<!--") == -1 and item[select_language] == ""):
                     f.write("<!-- The line below is skipping translation because the selected language is blank -->\n")
                 f.writelines(",".join([str(value) for value in item.values()]) + "\n")
+                
+            # GUIが終了してたら、GUI Labelに書き込む記述を実行する前にreturnしてあげる(固まらないように)
+            if (GUI_END_FLG == 1):
+                return
 
         self.label_converting   ["text"] = "[ H. End of Translation ]"
         self.label_progress_line["text"] = ""
+
+    def __run_googletrans(self, translator, select_language_text, select_language, src_lang, dest_lang, language):
+        SLEEP_TIME = 2 # sec. 高速でアクセスしすぎると翻訳エラーになるため
+
+        trans_text = ""
+
+        global GUI_END_FLG
+        if (GUI_END_FLG == 1):
+            print("[INFO] GUI is END. So, Do not Translation.")
+            return trans_text
+
+        try:
+            print(f"[INFO] translate: {src_lang} ---> {dest_lang}. language: {language}.")
+            if (select_language != language):
+                trans_text = translator.translate(select_language_text, src=src_lang, dest=dest_lang).text
+                print(f"[INFO] {select_language_text} ---> {trans_text}")
+            else:
+                trans_text = select_language_text
+                print(f"[INFO] {select_language} == {language}. So, Do not Translation.")
+        except Exception as e:
+            print(f"[ERROR] {e}")
+
+        time.sleep(SLEEP_TIME)
+
+        return trans_text
 
     def __read_text(self, text_file_path):
         text_header = []
