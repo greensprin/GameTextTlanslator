@@ -37,7 +37,7 @@ class GUI:
         # self.root.state("zoomed") # ウィンドウを最大サイズで起動する
 
         # タイトル表示
-        self.root.title("Text Translator")
+        self.root.title("7DTD Text Translator")
 
         # ヘッダーテンプレート表示
         self.template_outline        = tk.Label(text="", height=8, width=79, relief=tk.SOLID, bd=1)
@@ -88,7 +88,7 @@ class GUI:
         # 各種情報
         self.outline       = tk.Label(text="", height=4, width=17, relief=tk.SOLID, bd=1)
         self.label_orderer = tk.Label(text="I. orderer: az-jp"    )
-        self.label_date    = tk.Label(text="   date: 2023/08/23"  )
+        self.label_date    = tk.Label(text="   date: 2023/08/29"  )
         self.label_version = tk.Label(text="   version: 7DTD・a21")
 
         # 実行時表示部
@@ -305,6 +305,8 @@ class GUI:
             print(f"[INFO] select_language_text    : {select_language_text}")
             print(f"[INFO] src_language            : {src_language[select_language]}")
 
+            translate_start_time = time.time()
+
             # 翻訳処理 (指定の言語と翻訳後の言語が同じ場合は翻訳しない)
             item["english"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "en"   , "english"  )
             item["german"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "de"   , "german"   )
@@ -322,6 +324,8 @@ class GUI:
             item["spanish"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "es"   , "spanish"  )
 
             print(item) # for debug
+
+            print(f"Translate Time: {time.time() - translate_start_time}")
 
             # GUIが終了したときは強制終了
             if (GUI_END_FLG == 1):
@@ -372,6 +376,10 @@ class GUI:
             else:
                 trans_text = select_language_text
                 print(f"[INFO] {select_language} == {language}. So, Do not Translation.")
+
+            # ゲーム内改行コードの前後の空白を削除 (前後ろを分けて置換しているのは、一度に置換してしまうと\nが並んでいるときに、後空白が残ってしまう可能性があるため)
+            trans_text = trans_text.replace(" \\n", "\\n") # 前空白
+            trans_text = trans_text.replace("\\n ", "\\n") # 後空白
         except Exception as e:
             print(f"[ERROR] {e}")
 
@@ -387,6 +395,8 @@ class GUI:
             for i, line in enumerate(f.readlines()):
                 # 改行を削除
                 line = line.replace("\n", "")
+                # ゲーム内改行コードは、前後に空白を入れる
+                line = line.replace("\\n", " \\n ")
 
                 line_split = line.split(",")
 
