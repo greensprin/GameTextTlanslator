@@ -337,7 +337,8 @@ class GUI:
         # ファイル出力
         with open(self.output_filename, "w", encoding="utf-8", errors="ignore") as f:
             # 処理開始時間をコメントアウトで記入
-            f.write(f"<!-- {process_start_time} -->\n")
+            # f.write(f"<!-- {process_start_time} -->\n")
+            f.write(f"translationdate,,{process_start_time}{','*17}\n")
 
             # 翻訳結果を記入
             for i, item in enumerate(text_dict_lists):
