@@ -372,6 +372,7 @@ class GUI:
             print(f"[INFO] translate: {src_lang} ---> {dest_lang}. language: {language}.")
             if (select_language != language):
                 trans_text = translator.translate(select_language_text, src=src_lang, dest=dest_lang).text
+                trans_text = trans_text.replace(",", "") # 文章中のカンマを削除する
                 print(f"[INFO] {select_language_text} ---> {trans_text}")
             else:
                 trans_text = select_language_text
