@@ -399,6 +399,8 @@ class GUI:
                 line = line.replace("\n", "")
                 # ゲーム内改行コードは、前後に空白を入れる
                 line = line.replace("\\n", " \\n ")
+                # 文章中の " を削除する
+                line = line.replace("\"", "")
 
                 line_split = line.split(",")
 

@@ -1,0 +1,8 @@
+translationdate,,2024/06/07 22:19:18,,,,,,,,,,,,,,,,,
+Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
+<!--1キー、2ファイル、3タイプ、4メインメニュー、5翻訳しない、6以降翻訳-->
+<!--6英語、7代替テキスト、8ドイツ語、9ラテン語、10フランス語、11イタリア語、12日本語、13韓国語、14ポーランド語、15ブラジル語(ポルトガル語）、16ロシア語、17トルコ語、18中国語（簡体）、19中国語（繁体）、20スペイン語 -->
+<!-- 1xuiBuffStatDays,2UI,3XUI,4,5?,6Days,7,8Tage,9Días,10Jours,11Giorni,12日,13일,14Dni,15Dias,16Дней,17Gün,18天数,19天,20Días -->
+<!-- 4,5 7は無し-->    
+
+vehicle鮫Placeable,vehicles,vehicle,4,5,vehicle鮫Placeable,7,Fahrzeug – Platzierbar,Vehiculum Placeable,véhicule鮫Placeable,veicolo鮫Placeable,車両サメ配置可能,차량鮫배치 가능,pojazd 鮫Możliwość umieszczenia,veículo鮫Placeable,транспортное средство 鮫Размещаемый,Araç Yerleştirilebilir,车辆鲛可放置,車輛鮫可放置,vehículo鮫Colocable
