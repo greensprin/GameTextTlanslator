@@ -88,7 +88,7 @@ class GUI:
         # 各種情報
         self.outline       = tk.Label(text="", height=4, width=17, relief=tk.SOLID, bd=1)
         self.label_orderer = tk.Label(text="I. orderer: az-jp"    )
-        self.label_date    = tk.Label(text="   date: 2023/08/29"  )
+        self.label_date    = tk.Label(text="   date: 2024/06/06"  )
         self.label_version = tk.Label(text="   version: 7DTD・a21")
 
         # 実行時表示部
