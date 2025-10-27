@@ -32,7 +32,7 @@ class GUI:
         self.root = tk.Tk()
 
         win_width  = 570
-        win_height = 450
+        win_height = 450 - 100
         self.root.geometry(f"{win_width}x{win_height}")
         # self.root.state("zoomed") # ウィンドウを最大サイズで起動する
 
@@ -40,7 +40,7 @@ class GUI:
         self.root.title("7DTD Text Translator")
 
         # ヘッダーテンプレート表示
-        self.template_outline        = tk.Label(text="", height=8, width=79, relief=tk.SOLID, bd=1)
+        self.template_outline        = tk.Label(text="", height=4, width=79, relief=tk.SOLID, bd=1)
         self.label_template          = tk.Label(text="A. Template")
         self.header_template_split_0 = ",".join(self.header_template.split(",")[ 0: 7])
         self.header_template_split_1 = ",".join(self.header_template.split(",")[ 7:])
@@ -49,33 +49,18 @@ class GUI:
         self.text_header_template_0.insert(tk.END, ",\n".join([self.header_template_split_0, self.header_template_split_1]))
         self.text_header_template_0["state"] = "disable"
 
-        self.text_header_only_key   = tk.Text(width=90, height=1, font=("Arial", 8), bg="#f0f0f0", relief="flat")
-        self.text_header_only_key.insert(tk.END, "Key")
-        self.text_header_only_key["state"] = "disable"
-
-        self.label_header_alphabet0 = tk.Label(text="<V>")
-        self.label_header_alphabet1 = tk.Label(text="<X>")
-
         # ファイル選択
         label_file_path = tk.Label(text="B. Text File Path")
         self.textbox_file_path = tk.Entry(width = 40)
-
-        # 機能選択プルダウンメニュー
-        label_select_function        = tk.Label(text="C. Select Function")
-        self.combbox_function_values = ("V. Translate Key Only", "X. Translate Language")
-        self.combbox_function        = ttk.Combobox(width = 20, height = 7, values = self.combbox_function_values)
-        self.combbox_function.set(self.combbox_function_values[0])
-        self.combbox_function.bind("<<ComboboxSelected>>", self.__update_combbox_language)
 
         # 参照ボタン
         self.filedialog_btn = tk.Button(self.root, text="browse", command=self.__open_filedialog, font=("", 8))
 
         # 言語選択プルダウンメニュー
         label_language = tk.Label(text="D. Select Language")
-        self.combbox_language_values_0 = ("1.Key")
         self.combbox_language_values_1 = ("1.Key", "6.english","8.german","9.latam","10.french","11.italian","12.japanese","13.koreana","14.polish","15.brazilian","16.russian","17.turkish","18.schinese","19.tchinese","20.spanish")
-        self.combbox_language = ttk.Combobox(width = 12, height=7, values=self.combbox_language_values_0)
-        self.combbox_language.set(self.combbox_language_values_0) # Keyを初期値として設定
+        self.combbox_language = ttk.Combobox(width = 12, height=7, values=self.combbox_language_values_1)
+        self.combbox_language.set(self.combbox_language_values_1[0]) # Keyを初期値として設定
 
         # 出力先ファイル表示
         self.label_output      = tk.Label(text="E. Output File Path")
@@ -88,8 +73,8 @@ class GUI:
         # 各種情報
         self.outline       = tk.Label(text="", height=4, width=17, relief=tk.SOLID, bd=1)
         self.label_orderer = tk.Label(text="I. orderer: az-jp"    )
-        self.label_date    = tk.Label(text="   date: 2024/06/06"  )
-        self.label_version = tk.Label(text="   version: 7DTD・a21")
+        self.label_date    = tk.Label(text="   date: 2025/09/09"  )
+        self.label_version = tk.Label(text="   version: 7DTD V2.0")
 
         # 実行時表示部
         self.label_converting    = tk.Label(text="")
@@ -97,15 +82,10 @@ class GUI:
         self.label_progress_line = tk.Label(text="")
 
         self.label_template         .grid(row=0 , column=0, padx=10, pady=(10, 0), sticky=tk.W)
-        self.label_header_alphabet0 .grid(row=1 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
-        self.text_header_only_key   .grid(row=2 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
-        self.label_header_alphabet1 .grid(row=3 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
         self.text_header_template_0 .grid(row=4 , column=0, padx=10, pady=0, columnspan=5, sticky=tk.W)
         label_file_path             .grid(row=5 , column=0, padx=10, pady=(15, 10), sticky=tk.W)
         self.textbox_file_path      .grid(row=5 , column=1, padx=10, pady=(15, 10), sticky=tk.W)
         self.filedialog_btn         .grid(row=5 , column=2, padx= 0, pady=(5, 0)    , sticky=tk.W)
-        label_select_function       .grid(row=6 , column=0, padx=10, pady=10    , sticky=tk.W)
-        self.combbox_function       .grid(row=6 , column=1, padx=10, pady=10    , sticky=tk.W)
         label_language              .grid(row=7 , column=0, padx=10, pady=10    , sticky=tk.W)
         self.combbox_language       .grid(row=7 , column=1, padx=10, pady=10    , sticky=tk.W)
         self.label_output           .grid(row=8 , column=0, padx=10, pady= 5    , sticky=tk.W)
@@ -140,17 +120,6 @@ class GUI:
         self.label_progress     .place(x=x, y=label_orderer_y + 20 - 42)
         self.label_progress_line.place(x=x, y=label_orderer_y + 40 - 42)
 
-    # 機能プルダウンメニューで選択が行われたときに実施
-    def __update_combbox_language(self, event):
-        if (self.combbox_function.get() == self.combbox_function_values[0]):
-            # 機能1
-            self.combbox_language["values"] = self.combbox_language_values_0
-            self.combbox_language.set(self.combbox_language_values_0)
-        else:
-            # 機能2
-            self.combbox_language["values"] = self.combbox_language_values_1
-            self.combbox_language.set(self.combbox_language_values_1[0])
-
     # リサイズ時の動作
     def __resize_frame(self, event):
         # ウィンドウサイズ取得 (動的に表示内容を切り替えるため)
@@ -167,7 +136,7 @@ class GUI:
         #     self.label_template         .grid()
         #     self.text_header_template_0.grid()
         #     self.__set_place(160, 210, template_outline_flg=1)
-        self.__set_place(160, 255, template_outline_flg=1)
+        self.__set_place(160, 255 - 100, template_outline_flg=1)
 
     # 終了の動作
     def __on_closing(self):
@@ -336,15 +305,13 @@ class GUI:
 
         # ファイル出力
         with open(self.output_filename, "w", encoding="utf-8", errors="ignore") as f:
-            # 処理開始時間をコメントアウトで記入
-            # f.write(f"<!-- {process_start_time} -->\n")
-            f.write(f"translationdate,,{process_start_time}{','*17}\n")
-
             # 翻訳結果を記入
             for i, item in enumerate(text_dict_lists):
                 # ヘッダー記述 (最初だけ)
                 if (i == 0):
                     f.writelines(",".join(text_header) + "\n")
+                    # 処理開始時間をコメントアウトで記入
+                    f.write(f"translationdate,,{process_start_time}{','*17}\n")
 
                 # 内容記述
                 # 空白かつコメントアウト行ではないが、指定された言語が空白である場合は、処理をスキップしたことを伝える
@@ -397,6 +364,8 @@ class GUI:
             for i, line in enumerate(f.readlines()):
                 # 改行を削除
                 line = line.replace("\n", "")
+                # 改行がつながっている場合は、削除する
+                line = line.replace("\\n\\n", "")
                 # ゲーム内改行コードは、前後に空白を入れる
                 line = line.replace("\\n", " \\n ")
                 # 文章中の " を削除する
@@ -422,12 +391,6 @@ class GUI:
                 text_dict_tmp = dict(zip(text_header, elem))
             else:
                 text_dict_tmp = dict(zip_longest(text_header, elem))
-
-                if (self.combbox_function.get() == self.combbox_function_values[0]):
-                    # Noneの箇所を置換
-                    for key, value in text_dict_tmp.items():
-                        if (value == None):
-                            text_dict_tmp[key] = ""
                 
             text_dict_lists.append(text_dict_tmp)
 
