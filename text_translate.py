@@ -232,8 +232,8 @@ class GUI:
             self.label_progress_line["text"] = f"Progressing line {i+1} of {len(text_dict_lists)}"
 
             # 空白行 or コメントアウト行は処理しない
-            if (item["Key"] == "" or item["Key"].find("<!--") != -1):
-                print(f"[INFO] This row is CommentOut or empty row. So, process is skiped.")
+            if (item["Key"] == "" or item["Key"].find("<!--") != -1 or item["Key"] == "Key"):
+                print(f"[INFO] This row is CommentOut or empty row or multi key line. So, process is skiped.")
                 print(f"[INFO] {item}")
                 # 進捗を進める
                 self.label_progress["text"] = f"Progress: {round((i+1)/len(text_dict_lists)*100)}%"
@@ -314,9 +314,15 @@ class GUI:
                     f.write(f"translationdate,,{process_start_time}{','*17}\n")
 
                 # 内容記述
+                if (item["Key"] == "Key"):
+                    print(f"Multi Key line is detected. So, skip writing this line.")
+                    continue
+
                 # 空白かつコメントアウト行ではないが、指定された言語が空白である場合は、処理をスキップしたことを伝える
                 if (item["Key"] != "" and item["Key"].find("<!--") == -1 and item[select_language] == ""):
                     f.write("<!-- The line below is skipping translation because the selected language is blank -->\n")
+
+                # 翻訳した内容を書き込む
                 f.writelines(",".join([str(value) for value in item.values()]) + "\n")
                 
             # GUIが終了してたら、GUI Labelに書き込む記述を実行する前にreturnしてあげる(固まらないように)
