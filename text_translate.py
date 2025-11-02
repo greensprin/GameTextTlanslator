@@ -32,7 +32,7 @@ class GUI:
         self.root = tk.Tk()
 
         win_width  = 570
-        win_height = 450 - 100
+        win_height = 450 - 70
         self.root.geometry(f"{win_width}x{win_height}")
         # self.root.state("zoomed") # ウィンドウを最大サイズで起動する
 
@@ -55,6 +55,12 @@ class GUI:
 
         # 参照ボタン
         self.filedialog_btn = tk.Button(self.root, text="browse", command=self.__open_filedialog, font=("", 8))
+
+        # モード選択 (Full or Short)
+        label_select_mode = tk.Label(text="C. Select Mode")
+        self.combbox_select_mode_values = ("Full", "Short")
+        self.combbox_select_mode = ttk.Combobox(width = 12, height=7, values=self.combbox_select_mode_values)
+        self.combbox_select_mode.set(self.combbox_select_mode_values[0]) # Fullを初期値として設定
 
         # 言語選択プルダウンメニュー
         label_language = tk.Label(text="D. Select Language")
@@ -86,6 +92,8 @@ class GUI:
         label_file_path             .grid(row=5 , column=0, padx=10, pady=(15, 10), sticky=tk.W)
         self.textbox_file_path      .grid(row=5 , column=1, padx=10, pady=(15, 10), sticky=tk.W)
         self.filedialog_btn         .grid(row=5 , column=2, padx= 0, pady=(5, 0)    , sticky=tk.W)
+        label_select_mode           .grid(row=6 , column=0, padx=10, pady=10    , sticky=tk.W)
+        self.combbox_select_mode    .grid(row=6 , column=1, padx=10, pady=10    , sticky=tk.W)
         label_language              .grid(row=7 , column=0, padx=10, pady=10    , sticky=tk.W)
         self.combbox_language       .grid(row=7 , column=1, padx=10, pady=10    , sticky=tk.W)
         self.label_output           .grid(row=8 , column=0, padx=10, pady= 5    , sticky=tk.W)
@@ -136,7 +144,7 @@ class GUI:
         #     self.label_template         .grid()
         #     self.text_header_template_0.grid()
         #     self.__set_place(160, 210, template_outline_flg=1)
-        self.__set_place(160, 255 - 100, template_outline_flg=1)
+        self.__set_place(160, 255 - 60, template_outline_flg=1)
 
     # 終了の動作
     def __on_closing(self):
@@ -277,20 +285,18 @@ class GUI:
             translate_start_time = time.time()
 
             # 翻訳処理 (指定の言語と翻訳後の言語が同じ場合は翻訳しない)
-            item["english"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "en"   , "english"  )
-            item["german"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "de"   , "german"   )
-            item["latam"    ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "la"   , "latam"    )
-            item["french"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "fr"   , "french"   )
-            item["italian"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "it"   , "italian"  )
-            item["japanese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ja"   , "japanese" )
-            item["koreana"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ko"   , "koreana"  )
-            item["polish"   ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "pl"   , "polish"   )
-            item["brazilian"] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "pt"   , "brazilian")
-            item["russian"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "ru"   , "russian"  )
-            item["turkish"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "tr"   , "turkish"  )
-            item["schinese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "zh-cn", "schinese" )
-            item["tchinese" ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "zh-tw", "tchinese" )
-            item["spanish"  ] = self.__run_googletrans(translator, select_language_text, select_language, src_language[select_language], "es"   , "spanish"  )
+            for key_language in src_language:
+                # Keyは翻訳しない
+                if (key_language == "Key"):
+                    continue
+
+                # 翻訳
+                item[key_language] = self.__run_googletrans(translator,
+                                                            select_language_text,
+                                                            select_language,
+                                                            src_language[select_language],
+                                                            src_language[key_language],
+                                                            key_language)
 
             print(item) # for debug
 
