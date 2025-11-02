@@ -142,18 +142,6 @@ class GUI:
     def __resize_frame(self, event):
         # ウィンドウサイズ取得 (動的に表示内容を切り替えるため)
         self.root.update_idletasks()
-        window_width  = self.root.winfo_width()
-        window_height = self.root.winfo_height()
-
-        # # 動的に文字列を表示、非表示するコードのサンプル
-        # if (window_width < 560):
-        #     self.label_template         .grid_remove()
-        #     self.text_header_template_0.grid_remove()
-        #     self.__set_place(137, 129, template_outline_flg=0)
-        # else:
-        #     self.label_template         .grid()
-        #     self.text_header_template_0.grid()
-        #     self.__set_place(160, 210, template_outline_flg=1)
         self.__set_place(160, 255 - 60, template_outline_flg=1)
 
     # 終了の動作
@@ -302,11 +290,6 @@ class GUI:
                 self.label_progress["text"] = f"Progress: {round((i+1)/len(text_dict_lists)*100)}%"
                 continue
 
-            # # ゲーム用語を単語に分割して翻訳する機能 (不採用) ※ゲーム用語はそのまま出力されてよいということなので
-            # if (select_language == "Key"):
-            #     print(f"[INFO] pre select_language_text: {select_language_text}")
-            #     select_language_text = " ".join(re.findall("[A-Za-z][a-z0-9一-鿯]*", select_language_text))
-
             # for debug
             print(f"[INFO] select_language         : {select_language}")
             print(f"[INFO] select_language_text    : {select_language_text}")
@@ -331,8 +314,6 @@ class GUI:
                                                             src_language[select_language],
                                                             src_language[key_language],
                                                             key_language)
-
-            print(item) # for debug
 
             print(f"Translate Time: {time.time() - translate_start_time}")
 
