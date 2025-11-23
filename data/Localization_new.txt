@@ -1,0 +1,12 @@
+Key,Source,Context,Changes,,English
+drugSoap,drugs,Drug,New,,Irish Spring,,,,
+drugSoapDesc,drugs,Drug,New,,Wash the stink from your body!! Fresh and clean as a whistle, Nice-Smelling; It's springtime in a bar,,,,
+buffDrugSoapl,buffs,Buff,New,,You took Iodine Pills,,,,
+buffSoapDesc,buffs,Buff,New,,Irish Spring.,,,,
+buffSmellOne,buffs,Buff,New,,Stinker,,,,
+buffSmellOneName,buffs,Buff,New,,Swamp ass,,,,
+buffSmellOneDesc,buffs,Buff,New,,You have Developed Swamp ass..Best use some soap and take a bath,,,,
+buffSmellOneTooltip,buffs,Buff,New,,You Stink.,,,,
+resourceGlycerin,items,Item,,,Glycerin,,
+resourceGlycerinDesc,items,Item,,,Glycerin can be eaten (Not Recommended) or used in cooking Stainless polish recipes.,,
+
