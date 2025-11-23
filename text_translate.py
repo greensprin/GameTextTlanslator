@@ -170,6 +170,13 @@ class GUI:
             time.sleep(0.5) # 処理付加削減のために少し止まりながら繰り返す
 
             if (self.start_flg == 1):
+                # 処理前にKeyに入っている文字列で無視する文字列を読み込む
+                if (not os.path.exists("ignore_key_list.txt")):
+                    print("[INFO] ignore_key_list.txt is not found.")
+                else:
+                    with open("ignore_key_list.txt", "r", encoding="utf-8", errors="ignore") as f:
+                        self.ignore_key_list = [line.replace("\n", "") for line in f.readlines() if (line.replace("\n", "") != "" and re.search("^#", line) is None)]
+
                 self.filedialog_btn["state"] = "disable"
                 self.button["state"] = "disable"
 
@@ -258,7 +265,7 @@ class GUI:
 
             # 空白行 or コメントアウト行は処理しない
             print(item)
-            if (item["Key"] == "" or item["Key"].find("<!--") != -1 or item["Key"] == "Key"):
+            if (item["Key"] == "" or item["Key"].find("<!--") != -1 or item["Key"] in self.ignore_key_list):
                 print(f"[INFO] This row is CommentOut or empty row or multi key line. So, process is skiped.")
                 print(f"[INFO] {item}")
                 # 進捗を進める
@@ -335,7 +342,7 @@ class GUI:
                     f.write(f"translationdate,,{process_start_time}{','*17}\n")
 
                 # 内容記述
-                if (item["Key"] == "Key"):
+                if (item["Key"] in self.ignore_key_list):
                     print(f"Multi Key line is detected. So, skip writing this line.")
                     continue
 
