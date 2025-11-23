@@ -3,9 +3,8 @@ release/*
 *.bat
 *_trans.txt
 doc/img_sub/*
-data/Localization_20230812.txt
 build/*
 dist/*
 old/*
 *.spec
-data/old/*
+data/backup
