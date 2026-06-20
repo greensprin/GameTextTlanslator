@@ -8,3 +8,4 @@ dist/*
 old/*
 *.spec
 data/backup
+*GameTxtTranslator_memo.xlsx
