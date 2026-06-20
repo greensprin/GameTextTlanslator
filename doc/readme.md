@@ -10,14 +10,24 @@
 
 1. text_translate.exeをダブルクリックしてGUIを起動します
 1. 「browse」ボタンを押して、翻訳したいテキストファイルを選択します
+1. Select ModeでFull, Shortを選択する (起動時はShortモードが選択されます)
+    - Fullモードは全ての言語に翻訳します。
+    - Shortモードは指定した言語にのみ翻訳します。
 1. Select Languageのプルダウンメニューから翻訳前の言語を選択します (初期値はKeyになっています)
+    - Shortモード選択時は翻訳後の言語を選択します (初期値はKeyになっています)
 1. 「Start Translation」ボタンを押して翻訳を開始します。
     - ボタンを押すと、GUI右下に進捗が表示されます
 1. 処理が終了すると、「Text File Path」に指定したファイルに翻訳結果が出力されます。
     - 元のファイルは末尾に「_old」がついて残ります
     - 出力されたファイルの2行目に、翻訳した日時が追記されます
 
-![GUI](img/GUI_V2.png "GUI")
+- Fullモード時
+    ![GUI](img/GUI_V2.png "GUI")
+- Shortモード時
+    ![GUI](img/GUI_V2_short.png "GUI")
+
+## Key除外機能
+- ignore_key_list.txtに除外したいKeyを設定することで、その行をskipできます。
 
 # 補足
 

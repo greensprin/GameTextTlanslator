@@ -1,0 +1,6 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,KeepLoaded,english,Context / Alternate Text,german,spanish,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese
+buffStatusWoundedName,buffs,Buff,,x,,Low Health,,Geringe Gesundheit,Salud baja,Santé faible,Salute bassa,体力低下,체력 낮음,Niski poziom zdrowia,Saúde baixa,Низкий уровень здоровья,Düşük Sağlık,低生命值,生命值不足
+buffStatusWoundedTooltip,buffs,Buff,,x,,Your maximum health is low. Apply first aid to restore it.,,"Deine maximale Gesundheit ist niedrig. Wende Erste Hilfe an, um sie wiederherzustellen.",Tu salud máxima está baja. Aplica primeros auxilios para restaurarla.,Votre santé max. est faible. Appliquez des premiers soins pour la rétablir.,La tua salute massima è bassa. Usa gli oggetti di pronto soccorso per curarti.,最大体力が低下しています。応急処置を施して回復させましょう。,최대 체력이 낮습니다. 응급 치료 키트를 찾아 회복하세요.,"Maksymalny poziom zdrowia jest niski. Użyj apteczki, aby go przywrócić.",Sua saúde máxima está baixa. Use primeiros socorros para restaurá-la.,"Максимальный уровень здоровья снижен. Воспользуйтесь аптечкой, чтобы восстановить его.",Maksimum sağlığın düşük. Yenilemek için ilk yardım uygula.,你的最大生命值较低。使用急救措施恢复生命值。,你的生命值不足。實施急救，恢復生命值。
+
+
+V3抜粋,,,,,,,,,,,,,,

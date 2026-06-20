@@ -1,6 +1,8 @@
 import os
 import sys
 import re
+import csv
+import asyncio
 import tkinter as tk
 from tkinter import filedialog
 import tkinter.ttk as ttk
@@ -26,7 +28,10 @@ class GUI:
         self._run_translate_thread.start()
 
         # テンプレート文字列
-        self.header_template = "Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish"
+        self.header_template_v2 = "Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish"
+        self.header_template_v3 = "Key,File,Type,UsedInMainMenu,NoTranslate,KeepLoaded,english,Context / Alternate Text,german,spanish,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese"
+        self.header_template = self.header_template_v3  # 初期値はv3
+        self.file_format = "v3"
 
         # GUI設定
         self.root = tk.Tk()
@@ -60,12 +65,14 @@ class GUI:
         label_select_mode = tk.Label(text="C. Select Mode")
         self.combbox_select_mode_values = ("Full", "Short")
         self.combbox_select_mode = ttk.Combobox(width = 12, height=7, values=self.combbox_select_mode_values)
-        self.combbox_select_mode.set(self.combbox_select_mode_values[0]) # Fullを初期値として設定
+        self.combbox_select_mode.set(self.combbox_select_mode_values[1]) # Fullを初期値として設定
         self.combbox_select_mode.bind("<<ComboboxSelected>>", self.__on_select_mode)
 
         # 言語選択プルダウンメニュー
         label_language = tk.Label(text="D. Select Language")
-        self.combbox_language_values_1 = ("1.Key", "6.english","8.german","9.latam","10.french","11.italian","12.japanese","13.koreana","14.polish","15.brazilian","16.russian","17.turkish","18.schinese","19.tchinese","20.spanish")
+        self.combbox_language_values_v2 = ("1.Key","6.english","8.german","9.latam","10.french","11.italian","12.japanese","13.koreana","14.polish","15.brazilian","16.russian","17.turkish","18.schinese","19.tchinese","20.spanish")
+        self.combbox_language_values_v3 = ("1.Key","7.english","9.german","10.spanish","11.french","12.italian","13.japanese","14.koreana","15.polish","16.brazilian","17.russian","18.turkish","19.schinese","20.tchinese")
+        self.combbox_language_values_1 = self.combbox_language_values_v3  # 初期値はv3
         self.combbox_language = ttk.Combobox(width = 12, height=7, values=self.combbox_language_values_1)
         self.combbox_language.set(self.combbox_language_values_1[0]) # Keyを初期値として設定
         self.combbox_language2 = ttk.Combobox(width = 12, height=7, values=self.combbox_language_values_1)
@@ -83,7 +90,7 @@ class GUI:
         # 各種情報
         self.outline       = tk.Label(text="", height=4, width=17, relief=tk.SOLID, bd=1)
         self.label_orderer = tk.Label(text="I. orderer: az-jp"    )
-        self.label_date    = tk.Label(text="   date: 2025/09/09"  )
+        self.label_date    = tk.Label(text="   date: 2025/12/12"  )
         self.label_version = tk.Label(text="   version: 7DTD V2.0")
 
         # 実行時表示部
@@ -107,8 +114,9 @@ class GUI:
         self.label_seconds_per_line .grid(row=10, column=0, padx= 10,  pady=0                     , sticky=tk.W)
 
         # short用の選択肢を非表示にする
-        self.label_arrow.grid_remove()
-        self.combbox_language2.grid_remove()
+        if (self.combbox_select_mode.get() != "Short"):
+            self.label_arrow.grid_remove()
+            self.combbox_language2.grid_remove()
 
         # 画面リサイズされた時の挙動設定
         self.root.bind("<Configure>", self.__resize_frame)
@@ -158,11 +166,43 @@ class GUI:
         else:
             print("[INFO] Process already running.")
 
+    def __update_gui_from_format(self):
+        if self.file_format == "v3":
+            lang_values = self.combbox_language_values_v3
+            self.header_template = self.header_template_v3
+        else:
+            lang_values = self.combbox_language_values_v2
+            self.header_template = self.header_template_v2
+        self.combbox_language ["values"] = lang_values
+        self.combbox_language .set(lang_values[0])
+        self.combbox_language2["values"] = lang_values
+        self.combbox_language2.set(lang_values[0])
+        split_0 = ",".join(self.header_template.split(",")[ 0: 7])
+        split_1 = ",".join(self.header_template.split(",")[ 7:])
+        self.text_header_template_0["state"] = "normal"
+        self.text_header_template_0.delete("1.0", tk.END)
+        self.text_header_template_0.insert(tk.END, ",\n".join([split_0, split_1]))
+        self.text_header_template_0["state"] = "disable"
+
     def __open_filedialog(self):
-        filename = filedialog.askopenfilename(title="Open Text File.", filetypes=[("Text File", "*.txt")], initialdir="./")
+        filename = filedialog.askopenfilename(
+            title="Open Text File.",
+            filetypes=[("Localization File", "*.txt *.csv"), ("Text File", "*.txt"), ("CSV File", "*.csv")],
+            initialdir="./"
+        )
         if (filename != ""):
             self.textbox_file_path.delete(0, tk.END)
             self.textbox_file_path.insert(tk.END, filename)
+            # ファイルのヘッダーを読んでバージョン判定してGUIを即時更新
+            try:
+                with open(filename, "r", errors="ignore", encoding="utf-8-sig", newline="") as f:
+                    reader = csv.reader(f)
+                    header = next(reader)
+                self.file_format = "v3" if any(h.strip() == "KeepLoaded" for h in header) else "v2"
+                print(f"[INFO] file_format (filedialog): {self.file_format}")
+                self.__update_gui_from_format()
+            except Exception as e:
+                print(f"[WARNING] Could not read header: {e}")
 
     def __run_process(self):
         global GUI_END_FLG
@@ -173,17 +213,19 @@ class GUI:
                 # 処理前にKeyに入っている文字列で無視する文字列を読み込む
                 if (not os.path.exists("ignore_key_list.txt")):
                     print("[INFO] ignore_key_list.txt is not found.")
+                    self.ignore_key_list = []
                 else:
                     with open("ignore_key_list.txt", "r", encoding="utf-8", errors="ignore") as f:
                         self.ignore_key_list = [line.replace("\n", "") for line in f.readlines() if (line.replace("\n", "") != "" and re.search("^#", line) is None)]
 
+                # ボタンを無効化
                 self.filedialog_btn["state"] = "disable"
-                self.button["state"] = "disable"
+                self.button        ["state"] = "disable"
 
                 print("[INFO] Process Start !!!")
                 text_file_path   = re.sub("\"$", "", re.sub("^\"", "", self.textbox_file_path.get())) # windows explorerの「パスのコピー」で絶対パスを使った場合に対応するため、先頭と末尾のダブルクォーテーションを削除している
-                select_language  = re.sub("[0-9]+\.", "", self.combbox_language .get())
-                select_language2 = re.sub("[0-9]+\.", "", self.combbox_language2.get())
+                select_language  = re.sub(r"[0-9]+\.", "", self.combbox_language .get())
+                select_language2 = re.sub(r"[0-9]+\.", "", self.combbox_language2.get())
                 select_mode      = self.combbox_select_mode.get()
 
                 # Shortモードで、翻訳先言語が元の言語と同じ場合はエラーを返す
@@ -216,7 +258,8 @@ class GUI:
                     continue
 
                 # 元のファイルをoldとしてコピー
-                shutil.copy(text_file_path, os.path.splitext(text_file_path)[0] + "_old.txt")
+                ext = os.path.splitext(text_file_path)[1]
+                shutil.copy(text_file_path, os.path.splitext(text_file_path)[0] + f"_old{ext}")
 
                 # 出力ファイル名設定
                 self.output_filename = text_file_path # f"{os.path.splitext(text_file_path)[0]}_trans.txt"
@@ -230,8 +273,9 @@ class GUI:
                 if (GUI_END_FLG == 1): # GUIが閉じていたら終了する
                     break
 
+                # ボタンを有効化
                 self.filedialog_btn["state"] = "normal"
-                self.button["state"] = "normal"
+                self.button        ["state"] = "normal"
 
             # processが実行されておらず、終了フラグがたっていたら処理を終了させる
             if (self.start_flg == 0 and GUI_END_FLG == 1):
@@ -258,8 +302,10 @@ class GUI:
         # テキストデータ読み込み
         text_header, text_dict_lists = self.__read_text(text_file_path, select_language, select_mode)
 
+        # フォーマットに応じてGUI更新（メインスレッドへ渡す）
+        self.root.after(0, self.__update_gui_from_format)
+
         # 翻訳
-        translator = Translator()
         for i, item in enumerate(text_dict_lists):
             self.label_progress_line["text"] = f"Progressing line {i+1} of {len(text_dict_lists)}"
 
@@ -314,13 +360,23 @@ class GUI:
                     print(f"[INFO] Short Mode is selected. So, skip translating {key_language}.")
                     continue
 
-                # 翻訳
-                item[key_language] = self.__run_googletrans(translator,
-                                                            select_language_text,
-                                                            select_language,
-                                                            src_language[select_language],
-                                                            src_language[key_language],
-                                                            key_language)
+                if (select_mode == "Short"):
+                    # Shortの場合は、選択した言語を上書きする
+                    write_language = select_language
+                else:
+                    # Fullの場合は、key_languageごとに翻訳する
+                    write_language = key_language
+
+                # 翻訳 (ファイルに存在しない列はスキップ)
+                if write_language not in item:
+                    print(f"[INFO] {write_language} is not in header. Skip.")
+                    continue
+                item[write_language] = self.__run_googletrans(
+                                            select_language_text,
+                                            select_language,
+                                            src_language[select_language],
+                                            src_language[key_language],
+                                            key_language)
 
             print(f"Translate Time: {time.time() - translate_start_time}")
 
@@ -332,14 +388,16 @@ class GUI:
             self.label_progress["text"] = f"Progress: {round((i+1)/len(text_dict_lists)*100)}%"
 
         # ファイル出力
-        with open(self.output_filename, "w", encoding="utf-8", errors="ignore") as f:
+        with open(self.output_filename, "w", encoding="utf-8", errors="ignore", newline="") as f:
+            writer = csv.writer(f, lineterminator="\n")
             # 翻訳結果を記入
             for i, item in enumerate(text_dict_lists):
                 # ヘッダー記述 (最初だけ)
                 if (i == 0):
-                    f.writelines(",".join(text_header) + "\n")
+                    writer.writerow(text_header)
                     # 処理開始時間をコメントアウトで記入
-                    f.write(f"translationdate,,{process_start_time}{','*17}\n")
+                    comma_count = len(text_header) - 3
+                    f.write(f"translationdate,,{process_start_time}{','*comma_count}\n")
 
                 # 内容記述
                 if (item["Key"] in self.ignore_key_list):
@@ -351,12 +409,8 @@ class GUI:
                     f.write("<!-- The line below is skipping translation because the selected language is blank -->\n")
 
                 # 翻訳した内容を書き込む
-                if (select_mode == "Full"):
-                    f.writelines(",".join([str(value) for value in item.values()]) + "\n")
-                else:
-                    write_value = f"{item['Key']},{item[select_language2]}\n" if (select_language2 in item) else ",".join([str(value) for value in item.values()]) + "\n"
-                    f.writelines(write_value)
-                
+                writer.writerow([str(value) if value is not None else '' for value in item.values()])
+
             # GUIが終了してたら、GUI Labelに書き込む記述を実行する前にreturnしてあげる(固まらないように)
             if (GUI_END_FLG == 1):
                 return
@@ -364,7 +418,7 @@ class GUI:
         self.label_converting   ["text"] = "[ H. End of Translation ]"
         self.label_progress_line["text"] = ""
 
-    def __run_googletrans(self, translator, select_language_text, select_language, src_lang, dest_lang, language):
+    def __run_googletrans(self, select_language_text, select_language, src_lang, dest_lang, language):
         SLEEP_TIME = 2 # sec. 高速でアクセスしすぎると翻訳エラーになるため
 
         trans_text = ""
@@ -377,7 +431,11 @@ class GUI:
         try:
             print(f"[INFO] translate: {src_lang} ---> {dest_lang}. language: {language}.")
             if (select_language != language):
-                trans_text = translator.translate(select_language_text, src=src_lang, dest=dest_lang).text
+                async def _translate():
+                    async with Translator() as t:
+                        return await t.translate(select_language_text, src=src_lang, dest=dest_lang)
+                result = asyncio.run(_translate())
+                trans_text = result.text
                 trans_text = trans_text.replace(",", "") # 文章中のカンマを削除する
                 print(f"[INFO] {select_language_text} ---> {trans_text}")
             else:
@@ -398,47 +456,44 @@ class GUI:
         text_header = []
         text_elems  = []
 
-        with open(text_file_path, "r", errors="ignore", encoding="utf-8") as f:
-            for i, line in enumerate(f.readlines()):
-                # 改行を削除
-                line = line.replace("\n", "")
-                # 改行がつながっている場合は、削除する
-                line = line.replace("\\n\\n", "")
-                # ゲーム内改行コードは、前後に空白を入れる
-                line = line.replace("\\n", " \\n ")
-                # 文章中の " を削除する
-                line = line.replace("\"", "")
+        with open(text_file_path, "r", errors="ignore", encoding="utf-8-sig", newline="") as f:
+            reader = csv.reader(f)
+            for i, row in enumerate(reader):
+                processed = []
+                for field in row:
+                    # 改行がつながっている場合は、削除する
+                    field = field.replace("\\n\\n", "")
+                    # ゲーム内改行コードは、前後に空白を入れる
+                    field = field.replace("\\n", " \\n ")
+                    processed.append(field)
 
-                line_split = line.split(",")
-
-                if (i == 0):
-                    if (line == self.header_template):
-                        text_header = line_split
+                if i == 0:
+                    if processed and processed[0].strip() == "Key":
+                        text_header = processed
                     else:
                         print("[INFO] Header is not exist.")
                         text_header = self.header_template.split(",")
-                        text_elems.append(line_split)
+                        text_elems.append(processed)
                 else:
-                    # "," で分割してリストに登録
-                    text_elems.append(line_split)
+                    text_elems.append(processed)
+
+        # バージョン判定: KeepLoaded 列の有無でv3かどうかを判断
+        self.file_format = "v3" if any(h.strip() == "KeepLoaded" for h in text_header) else "v2"
+        print(f"[INFO] file_format: {self.file_format}, header: {text_header}")
 
         # データ扱いやすいように辞書型に変換し、変換したものをリストに登録する
         text_dict_lists = []
 
-        for elem in text_elems:
-            if (elem[0] == "" or elem[0].find("<!--") != -1):
-                text_dict_tmp = dict(zip(text_header, elem))
-            else:
-                if (select_mode == "Full"):
-                    text_dict_tmp = dict(zip_longest(text_header, elem))
-                else:
-                    # Keyの場合はenglishとして扱う
-                    select_language = select_language if (select_language != "Key") else "english"
+        # headerのキーワードを小文字に変更 (ただし、Keyはそのまま)
+        text_header_lower = [h.lower() if h != "Key" else h for h in text_header]
 
-                    text_dict_tmp = {
-                        "Key": elem[0],
-                        select_language: elem[1],
-                    }
+        for elem in text_elems:
+            if not elem:  # csv.readerが空行を[]として返すケースを除外
+                continue
+            if elem[0] == "" or elem[0].find("<!--") != -1:
+                text_dict_tmp = dict(zip(text_header_lower, elem))
+            else:
+                text_dict_tmp = dict(zip_longest(text_header_lower, elem))
 
             text_dict_lists.append(text_dict_tmp)
 
